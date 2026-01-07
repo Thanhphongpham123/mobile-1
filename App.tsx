@@ -1,36 +1,43 @@
 import React from 'react';
-import { ClerkProvider, SignedIn, SignedOut, useUser } from '@clerk/clerk-expo';
+import { View } from 'react-native';
+import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginScreen from './app/screens/LoginScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Text, View} from 'react-native';
-import TabNavigation from "./app/navigations/TabNavigation";
-import ExploreScreen from "./app/screens/ExploreScreen";
-import ProfileScreen from "./app/screens/ProfileScreen";
-import {StatusBar} from "expo-status-bar";
+import { StatusBar } from 'expo-status-bar';
+
+import LoginScreen from './app/screens/LoginScreen';
+import ExploreScreen from './app/screens/ExploreScreen';
+import ProfileScreen from './app/screens/ProfileScreen';
+
+const Tab = createBottomTabNavigator();
+
+function MainTabs() {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Explore" component={ExploreScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+}
 
 export default function App() {
-    return (
+  return (
+    <ClerkProvider publishableKey="pk_test_dW5iaWFzZWQtdGFycG9uLTY4LmNsZXJrLmFjY291bnRzLmRldiQ">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar style="auto" />
 
-        <ClerkProvider publishableKey="pk_test_dW5iaWFzZWQtdGFycG9uLTY4LmNsZXJrLmFjY291bnRzLmRldiQ">
-        <View className="flex-1 bg-white">
-            <StatusBar style="auto"/>
-            {/*<Text>*/}
-            {/*    Halo*/}
-            {/*</Text>*/}
+        <SignedIn>
+          <NavigationContainer>
+            <MainTabs />
+          </NavigationContainer>
+        </SignedIn>
 
+        <SignedOut>
+          <LoginScreen />
+        </SignedOut>
 
-                    <SignedIn>
-                        <NavigationContainer>
-                            <TabNavigation/>
-                        </NavigationContainer>
-                    </SignedIn>
-                    <SignedOut>
-                        <LoginScreen />
-                    </SignedOut>
-
-
-        </View>
-        </ClerkProvider>
-    );
+      </GestureHandlerRootView>
+    </ClerkProvider>
+  );
 }
